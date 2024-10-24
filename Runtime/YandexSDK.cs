@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using UnityEngine;
+using Yandex.Handlers;
 using Yandex.Helpers;
 
 namespace Yandex
@@ -85,6 +86,8 @@ namespace Yandex
         [DllImport("__Internal")]
         private static extern void InitSDK();
 
+        
+        public YandexStorage Storage { get; private set; }
         private void Awake()
         {
             // Set the GameObject name
@@ -106,7 +109,12 @@ namespace Yandex
         {
             Initialize();
         }
-       
+
+        private void Update()
+        {
+            Storage?.Update();
+        }
+
         /// <summary>
         /// Init also called from HTML so this is just in case
         /// </summary>
@@ -116,6 +124,9 @@ namespace Yandex
 #if !UNITY_EDITOR && UNITY_WEBGL
             InitSDK();
 #endif
+
+            Storage = new YandexStorage();
+            Storage.Initialize();
         }
 
         public void UpdateLeaderboardScore(string leaderboardName, int score)
