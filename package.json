@@ -1,0 +1,32 @@
+{
+  "name": "com.zloivan.vkbridgesdk",
+  "displayName": "IKhom VKBridge SDK",
+  "version": "4.0.2",
+  "unity": "2019.1",
+  "description": "Custom implementation of VKBridge SDK.",
+  "keywords": [
+    "vk",
+    "unity"
+  ],
+  "dependencies": {},
+  "repository": {
+    "url": "https://github.com/zloivan/vk-facade.git",
+    "type": "git",
+    "revision": "d982cefe71efb30cb65b0454fdb2f42d76e60a36"
+  },
+  "_upm": {
+    "changelog": "- Fix storage behavior, in editor that was not working properly for ints and floats"},
+  "author": {
+    "name": "Ivan Khomichkov",
+    "url": "https://github.com/zloivan"
+  },
+  "readme": "https://github.com/zloivan/vk-facade/blob/master/README.md",
+  "license": "https://github.com/zloivan/vk-facade/blob/master/LICENSE.md",
+  "samples": [
+    {
+      "displayName": "VK WebGL Template",
+      "description": "WebGL Template, for publishing projects to VK social network",
+      "path": "Samples~/VKWebGLTemplate"
+    }
+  ]
+}
