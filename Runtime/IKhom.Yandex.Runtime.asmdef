@@ -3,6 +3,7 @@
     "rootNamespace": "IKhom",
     "references": [],
     "includePlatforms": [
+        "Editor",
         "WebGL"
     ],
     "excludePlatforms": [],
