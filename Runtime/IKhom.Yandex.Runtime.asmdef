@@ -2,10 +2,10 @@
     "name": "IKhom.Yandex.Runtime",
     "rootNamespace": "IKhom",
     "references": [],
-    "includePlatforms": [],
-    "excludePlatforms": [
+    "includePlatforms": [
         "WebGL"
     ],
+    "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
