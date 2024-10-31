@@ -20,7 +20,7 @@ namespace Yandex
                 // Create it if it doesn't exist
                 var sdkObject = new GameObject(YandexSDK.GameObjectName);
                 var component = sdkObject.AddComponent<YandexSDK>();
-                component.Initialize();
+               
                 _logger.Log("YANDEX_SDK_INITIALIZED","YandexSDK GameObject was not found. Created a new one.");
             }
             else
@@ -98,6 +98,7 @@ namespace Yandex
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                Initialize();
             }
             else
             {
