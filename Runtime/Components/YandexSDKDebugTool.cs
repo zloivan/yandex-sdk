@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Reflection;
 using System.Linq;
+using Yandex;
 using Yandex.Helpers;
 
 public class YandexSDKDebugTool : MonoBehaviour
@@ -90,6 +91,18 @@ public class YandexSDKDebugTool : MonoBehaviour
                 InvokeMethod(method);
             }
         }
+        
+        if (GUILayout.Button("Storage Save 404 to test", buttonStyle))
+        {
+            YandexSDK.Instance.Storage.SetInt("test",404);
+            YandexSDK.Instance.Storage.Save();
+        }
+        if (GUILayout.Button("Load saved value", buttonStyle))
+        {
+            var value = YandexSDK.Instance.Storage.GetInt("test");
+            Debug.Log(value);
+        }
+        
 
         GUILayout.EndScrollView();
 

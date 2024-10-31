@@ -27,27 +27,59 @@ namespace Yandex.Handlers
         [DllImport("__Internal")]
         private static extern void DeleteAllInternal();
 
-        // Public methods (PlayerPrefs-like API)
+        internal void Initialize()
+        {
+            _logger.Log("YANDEX_STORAGE", "Initializing");
+            if (!Application.isEditor)
+            {
+                LoadDataInternal();
+            }
+            else
+            {
+                _isDataLoaded = true;
+            }
+        }
+
         public void SetInt(string key, int value)
         {
             _logger.Log("YANDEX_STORAGE", $"Setting int: {key} = {value}");
+            if (Application.isEditor)
+            {
+                PlayerPrefs.SetInt(key, value);
+            }
+
             SetValue(key, value);
         }
 
         public void SetFloat(string key, float value)
         {
             _logger.Log("YANDEX_STORAGE", $"Setting float: {key} = {value}");
+            if (Application.isEditor)
+            {
+                PlayerPrefs.SetFloat(key, value);
+            }
+
             SetValue(key, value);
         }
 
         public void SetString(string key, string value)
         {
             _logger.Log("YANDEX_STORAGE", $"Setting string: {key} = {value}");
+            if (Application.isEditor)
+            {
+                PlayerPrefs.SetString(key, value);
+            }
+
             SetValue(key, value);
         }
 
         public int GetInt(string key, int defaultValue = 0)
         {
+            if (Application.isEditor)
+            {
+                return PlayerPrefs.GetInt(key, defaultValue);
+            }
+
             EnsureDataLoaded();
             if (HasKey(key) && _cachedData[key] is int value)
                 return value;
@@ -56,6 +88,11 @@ namespace Yandex.Handlers
 
         public float GetFloat(string key, float defaultValue = 0.0f)
         {
+            if (Application.isEditor)
+            {
+                return PlayerPrefs.GetFloat(key, defaultValue);
+            }
+
             EnsureDataLoaded();
             if (HasKey(key) && _cachedData[key] is float value)
                 return value;
@@ -64,6 +101,11 @@ namespace Yandex.Handlers
 
         public string GetString(string key, string defaultValue = "")
         {
+            if (Application.isEditor)
+            {
+                return PlayerPrefs.GetString(key, defaultValue);
+            }
+
             EnsureDataLoaded();
             if (HasKey(key) && _cachedData[key] is string value)
                 return value;
@@ -72,6 +114,11 @@ namespace Yandex.Handlers
 
         public bool HasKey(string key)
         {
+            if (Application.isEditor)
+            {
+                return PlayerPrefs.HasKey(key);
+            }
+
             EnsureDataLoaded();
             return _cachedData.ContainsKey(key);
         }
@@ -79,6 +126,12 @@ namespace Yandex.Handlers
         public void DeleteKey(string key)
         {
             _logger.Log("YANDEX_STORAGE", $"Deleting key: {key}");
+
+            if (Application.isEditor)
+            {
+                PlayerPrefs.DeleteKey(key);
+            }
+
             if (_cachedData.ContainsKey(key))
             {
                 _cachedData.Remove(key);
@@ -91,21 +144,15 @@ namespace Yandex.Handlers
             _logger.Log("YANDEX_STORAGE", "Deleting all data");
             _cachedData.Clear();
             _isDirty = false;
-            if (!Application.isEditor)
-            {
-                DeleteAllInternal(); 
-            }
-            else
+
+            if (Application.isEditor)
             {
                 PlayerPrefs.DeleteAll();
             }
-        }
-
-        // Internal methods
-        internal void Initialize()
-        {
-            _logger.Log("YANDEX_STORAGE", "Initializing");
-            LoadDataInternal();
+            else
+            {
+                DeleteAllInternal();
+            }
         }
 
         internal void Update()
@@ -124,6 +171,8 @@ namespace Yandex.Handlers
 
         internal void OnDataLoaded(string jsonData)
         {
+            if (Application.isEditor) return; // Shouldn't be called in editor mode
+
             _logger.Log("YANDEX_STORAGE", "Data loaded");
 
             try
@@ -149,21 +198,21 @@ namespace Yandex.Handlers
             DataLoaded?.Invoke();
         }
 
-        private void Save()
+        public void Save()
         {
             if (!_isDirty) return;
 
             _logger.Log("YANDEX_STORAGE", "Saving data");
 
-            if (!Application.isEditor)
+            if (Application.isEditor)
+            {
+                PlayerPrefs.Save();
+            }
+            else
             {
                 var storageData = StorageData.FromDictionary(_cachedData);
                 var json = JsonUtility.ToJson(storageData);
                 SaveDataInternal(json);
-            }
-            else
-            {
-                PlayerPrefs.Save();
             }
 
             _lastSaveTime = Time.time;
@@ -183,7 +232,11 @@ namespace Yandex.Handlers
 
             if (!Application.isEditor)
             {
-                LoadDataInternal(); 
+                LoadDataInternal();
+            }
+            else
+            {
+                _isDataLoaded = true;
             }
         }
     }

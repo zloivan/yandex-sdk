@@ -19,7 +19,8 @@ namespace Yandex
             {
                 // Create it if it doesn't exist
                 var sdkObject = new GameObject(YandexSDK.GameObjectName);
-                sdkObject.AddComponent<YandexSDK>();
+                var component = sdkObject.AddComponent<YandexSDK>();
+                component.Initialize();
                 _logger.Log("YANDEX_SDK_INITIALIZED","YandexSDK GameObject was not found. Created a new one.");
             }
             else
@@ -105,11 +106,6 @@ namespace Yandex
             }
         }
 
-        private void Start()
-        {
-            Initialize();
-        }
-
         private void Update()
         {
             Storage?.Update();
@@ -190,7 +186,10 @@ namespace Yandex
             _logger.Log("YANDEX_SDK", "Showing interstitial ad");
 #if !UNITY_EDITOR && UNITY_WEBGL
             ShowInterstitial();
+            
+            return;
 #endif
+            Invoke(nameof(OnInterstitialShown), .5f);
         }
 
         public void ShowRewardedAd()
@@ -198,7 +197,12 @@ namespace Yandex
             _logger.Log("YANDEX_SDK", "Showing rewarded ad");
 #if !UNITY_EDITOR && UNITY_WEBGL
             ShowRewarded();
+            
+            return;
 #endif
+            Invoke(nameof(OnRewardedAdOpened), .3f);
+            Invoke(nameof(OnRewardedAdClosed), .5f);
+            Invoke(nameof(OnRewardedAdRewarded), .6f);
         }
 
         public void CheckCanPlayerReview()
@@ -320,6 +324,22 @@ namespace Yandex
         {
             _logger.Log("YANDEX_SDK_RESPONSE", $"Language loaded: {language}");
             LanguageLoaded?.Invoke(language);
+        }
+        
+        [UnityEngine.Scripting.Preserve]
+        [UsedImplicitly]
+        private void OnDataLoaded(string json)
+        {
+            _logger.Log("YANDEX_SDK_RESPONSE", $"On Data loaded: {json}");
+            Storage.OnDataLoaded(json);
+        }
+        
+        [UnityEngine.Scripting.Preserve]
+        [UsedImplicitly]
+        private void OnDataSaved(bool success)
+        {
+            _logger.Log("YANDEX_SDK_RESPONSE", $"Language loaded: {success}");
+            Storage.OnDataSaved(success);
         }
 
         #endregion
